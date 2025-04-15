@@ -4,6 +4,7 @@ using APIEscola.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace apiEscola.Migrations
 {
     [DbContext(typeof(APIEscolaContext))]
-    partial class APIEscolaContextModelSnapshot : ModelSnapshot
+    [Migration("20250415175912_curso")]
+    partial class curso
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,43 @@ namespace apiEscola.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("APIEscola.Models.Aluno", b =>
+                {
+                    b.Property<Guid>("AlunoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CPF")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
+
+                    b.Property<string>("Celular")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
+
+                    b.Property<DateOnly>("DataNascimento")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserId1")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("AlunoId");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("Alunos", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -220,43 +260,6 @@ namespace apiEscola.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("apiEscola.Models.Aluno", b =>
-                {
-                    b.Property<Guid>("AlunoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CPF")
-                        .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
-
-                    b.Property<string>("Celular")
-                        .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
-
-                    b.Property<DateOnly>("DataNascimento")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId1")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("AlunoId");
-
-                    b.HasIndex("UserId1");
-
-                    b.ToTable("Alunos", (string)null);
-                });
-
             modelBuilder.Entity("apiEscola.Models.Curso", b =>
                 {
                     b.Property<Guid>("CursoId")
@@ -278,63 +281,13 @@ namespace apiEscola.Migrations
                     b.ToTable("Cursos", (string)null);
                 });
 
-            modelBuilder.Entity("apiEscola.Models.Matricula", b =>
+            modelBuilder.Entity("APIEscola.Models.Aluno", b =>
                 {
-                    b.Property<Guid>("MatriculaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1");
 
-                    b.Property<Guid?>("AlunoId")
-                        .IsRequired()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("TurmaId")
-                        .IsRequired()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("MatriculaId");
-
-                    b.HasIndex("AlunoId");
-
-                    b.HasIndex("TurmaId");
-
-                    b.ToTable("Matriculas", (string)null);
-                });
-
-            modelBuilder.Entity("apiEscola.Models.Turma", b =>
-                {
-                    b.Property<Guid>("TurmaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("Curso")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CursoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateOnly>("DataFim")
-                        .HasColumnType("date");
-
-                    b.Property<DateOnly>("DataInicio")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Descricao")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Sigla")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.HasKey("TurmaId");
-
-                    b.ToTable("Turmas", (string)null);
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -386,34 +339,6 @@ namespace apiEscola.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("apiEscola.Models.Aluno", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("apiEscola.Models.Matricula", b =>
-                {
-                    b.HasOne("apiEscola.Models.Aluno", "Aluno")
-                        .WithMany()
-                        .HasForeignKey("AlunoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("apiEscola.Models.Turma", "Turma")
-                        .WithMany()
-                        .HasForeignKey("TurmaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Aluno");
-
-                    b.Navigation("Turma");
                 });
 #pragma warning restore 612, 618
         }
